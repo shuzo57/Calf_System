@@ -1,0 +1,10 @@
+[Unit]
+Description=sending calf data program
+[Service]
+User=pi
+Group=pi
+Type=Simple
+ExecStart=/bin/bash -c '/home/pi/Calf_Device/start.sh'
+Restart=always
+[Install]
+WantedBy=multi-user.target

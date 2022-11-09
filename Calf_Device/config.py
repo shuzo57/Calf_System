@@ -1,0 +1,2 @@
+DISTANCE_MODE : int = 2
+INTERVAL : int = 10

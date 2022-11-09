@@ -1,0 +1,26 @@
+{
+    "connect": {
+        "server_ip": "192.168.8.211",
+        "server_port": 12000,
+        "MAX_CONNECTIONS": 30,
+        "charactor_code": "utf-8",
+        "timeout": 30,
+        "bufsize": 4096,
+        "EOT": "\u0004\u0004\u0004\u0004",
+        "ACK": "\u0006",
+        "IMG_COMAND": "\u0011",
+        "SENSOR_COMAND": "\u0012"
+    },
+    "image": {
+        "shape": {
+            "width": 448,
+            "height": 448
+        },
+        "color_num": 3,
+        "img_type": ".png"
+    },
+    "calf": {
+        "area": "yakayama",
+        "calf_id": "device_191"
+    }
+}
