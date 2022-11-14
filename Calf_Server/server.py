@@ -158,7 +158,3 @@ if __name__ == "__main__":
         raspi_conn.Run()
     except KeyboardInterrupt:
         sys.exit()
-
-"""
-sock.accept()を実行している間はCtrl+Cが使えず、強制的にサーバーを終了できないのではないか
-"""

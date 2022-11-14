@@ -64,7 +64,8 @@ def main(
 if __name__ == "__main__":
     from load_setting import LoadSetting
     load_setting = LoadSetting()
-    calf_id = load_setting.GetCalfInfo()["calf_id"]
+    calf_info = load_setting.GetCalfInfo()
+    calf_id = calf_info["calf_id"]
     connect_info = load_setting.GetConnInfo()
     
     amg = ThermoSensorConn()
