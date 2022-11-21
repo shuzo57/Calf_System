@@ -1,6 +1,6 @@
 {
     "connect": {
-        "server_ip": "192.168.1.85",
+        "server_ip": "192.168.8.211",
         "server_port": 12000,
         "MAX_CONNECTIONS": 30,
         "charactor_code": "utf-8",
@@ -20,7 +20,7 @@
         "img_type": ".png"
     },
     "calf": {
-        "area": "yakayama",
-        "calf_id": "device_191"
+        "area": "nakayama",
+        "calf_id": "device_192"
     }
 }

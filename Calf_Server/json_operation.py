@@ -7,9 +7,8 @@ class JsonOpe(Directory):
         super().__init__()
         self.JSON = ".json"
     
-    def SaveJson(self, calf_id, json_data):
-        TIME  = self.GetSecond()
-        data_name = TIME + self.JSON
+    def SaveJson(self, calf_id, dt:str, json_data):
+        data_name = dt + self.JSON
         dir_path = self.GetLatestNumSensorDir(calf_id)
         data_path = os.path.join(dir_path, data_name)
         

@@ -45,9 +45,14 @@ class ServerConn():
         except:
             pass
     
-    def SendSensor(self, json_data:str):
+    def SendSensor(self, json_data:str, dt:str):
         while True:
             self.SendSensorComand()
+            msg = self.sock.recv(self.bufsize).decode(self.charactor_code)
+            if msg == self.ACK:
+                break
+        while True:
+            self.SendDateTime(dt)
             msg = self.sock.recv(self.bufsize).decode(self.charactor_code)
             if msg == self.ACK:
                 break
@@ -57,9 +62,16 @@ class ServerConn():
             if msg == self.ACK:
                 break
     
-    def SendImg(self, img:Union[np.ndarray, bytes]):
+    def SendImg(self, img:Union[np.ndarray, bytes], dt:str):
         while True:
             self.SendImgComand()
+            msg = self.sock.recv(self.bufsize).decode(self.charactor_code)
+            if msg == self.ACK:
+                break
+            
+            
+        while True:
+            self.SendDateTime(dt)
             msg = self.sock.recv(self.bufsize).decode(self.charactor_code)
             if msg == self.ACK:
                 break
@@ -82,6 +94,9 @@ class ServerConn():
     
     def SendSensorComand(self):
         self.sock.send(self.SENSOR_COMAND.encode(self.charactor_code))
+    
+    def SendDateTime(self, dt:str):
+        self.sock.send(dt.encode(self.charactor_code))
     
     def SendImgData(self, img:Union[np.ndarray, bytes]):
         if type(img) is np.ndarray:

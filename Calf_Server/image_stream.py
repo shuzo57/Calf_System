@@ -15,14 +15,13 @@ class ImageStream(Directory):
         self.img_type = self.load_setting.GetImgInfo()["img_type"]
         self.img_shape = (self.height, self.width, self.color_num)
     
-    def SaveImg(self, calf_id, img:Union[np.ndarray, bytes]):
+    def SaveImg(self, calf_id, dt:str, img:Union[np.ndarray, bytes]):
         if type(img) is bytes:
             img = self.BinToImg(img)
         
-        TIME = self.GetSecond()
-        img_name = TIME + self.img_type
+        img_name = dt + self.img_type
         dir_path = self.GetLatestNumImageDir(calf_id)
-        img_path = str = os.path.join(dir_path, img_name)
+        img_path = os.path.join(dir_path, img_name)
         
         cv2.imwrite(img_path, img)
         
