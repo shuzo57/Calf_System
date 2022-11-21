@@ -53,11 +53,12 @@ class RaspberryPiConnection():
             print("Error in connect_to_pi func.")
     
     def Run(self):
-        for i in range(self.MAX_CONNECTIONS):
+        while True:
             try:
-                self.new_sock[i] = self.ConnectToPi()
-                self.receive_th[i] = threading.Thread(target=self.Receive, args=(self.new_sock[i], ))
-                self.receive_th[i].start()
+                self.new_sock = self.ConnectToPi()
+                self.receive_th = threading.Thread(target=self.Receive, args=(self.new_sock, ))
+                self.receive_th.setDaemon(True)
+                self.receive_th.start()
             except KeyboardInterrupt:
                 raise KeyboardInterrupt
             except ConnectionResetError:
@@ -67,6 +68,7 @@ class RaspberryPiConnection():
     
     def Receive(self, sock : socket.socket):
         try:
+            # Identify calf_id
             # time out setting
             timeout_flag = False
             start_time = time.time()
@@ -85,60 +87,70 @@ class RaspberryPiConnection():
                 else:
                     print("break")
                     break
+            # Identify Command
+            start_time = time.time()
+            recv_comand = ''
             while True:
-                # Identify Command
-                start_time = time.time()
-                recv_comand = ''
-                while True:
-                    recv_comand = sock.recv(self.bufsize).decode(self.charactor_code)
-                    # time out checker
-                    if not timeout_flag:
-                        end_time = time.time()
-                        if self.timeout < end_time - start_time:
-                            timeout_flag = True
-                            break
-                    else:
-                        print("break")
-                        break
-                    if recv_comand:
-                        # ACKnowledgement
-                        sock.send(self.ACK.encode(self.charactor_code))
-                        break
-                start_time = time.time()
-                full_msg = b''
-                while True:
-                    # Receive Message
-                    msg = sock.recv(self.bufsize)
-                    # time out checker
-                    if not timeout_flag:
-                        end_time = time.time()
-                        if self.timeout < end_time - start_time:
-                            timeout_flag = True
-                            break
-                    else:
-                        print("break")
-                        break
-                    full_msg += msg
-                    if full_msg[-4:] == self.EOT.encode(self.charactor_code):
-                        full_msg = full_msg[:-4]
-                        if recv_comand == self.IMG_COMAND:
-                            full_msg = self.image_stream.BinToImg(full_msg)
-                            self.image_stream.SaveImg(calf_id, full_msg)
-                            print(f"{calf_id} send image")
-                        elif recv_comand == self.SENSOR_COMAND:
-                            full_msg = full_msg.decode(self.charactor_code)
-                            self.json_opration.SaveJson(calf_id, full_msg)
-                            print(f"{calf_id} send sensor data")
-                        # ACKnowledgement
-                        sock.send(self.ACK.encode(self.charactor_code))
-                        break
-                # finished soket connection 
-                if timeout_flag:
-                    print(f"{calf_id} cocket closed")
-                    sock.close()
-                    break
-                else:
+                recv_comand = sock.recv(self.bufsize).decode(self.charactor_code)
+                # time out checker
+                if not timeout_flag:
                     end_time = time.time()
+                    if self.timeout < end_time - start_time:
+                        timeout_flag = True
+                        break
+                else:
+                    print("break")
+                    break
+                if recv_comand:
+                    # ACKnowledgement
+                    sock.send(self.ACK.encode(self.charactor_code))
+                    break
+            # receive file name (date)
+            start_time = time.time()
+            recv_datetime = ''
+            while True:
+                recv_datetime = sock.recv(self.bufsize).decode(self.charactor_code)
+                # time out checker
+                if not timeout_flag:
+                    end_time = time.time()
+                    if self.timeout < end_time - start_time:
+                        timeout_flag = True
+                        break
+                else:
+                    print("break")
+                    break
+                if recv_datetime:
+                    # ACKnowledgement
+                    sock.send(self.ACK.encode(self.charactor_code))
+                    break
+            # receive data
+            start_time = time.time()
+            full_msg = b''
+            while True:
+                # Receive Message
+                msg = sock.recv(self.bufsize)
+                # time out checker
+                if not timeout_flag:
+                    end_time = time.time()
+                    if self.timeout < end_time - start_time:
+                        timeout_flag = True
+                        break
+                else:
+                    break
+                full_msg += msg
+                if full_msg[-4:] == self.EOT.encode(self.charactor_code):
+                    full_msg = full_msg[:-4]
+                    if recv_comand == self.IMG_COMAND:
+                        full_msg = self.image_stream.BinToImg(full_msg)
+                        self.image_stream.SaveImg(calf_id, recv_datetime, full_msg)
+                        print(f"{calf_id} send image")
+                    elif recv_comand == self.SENSOR_COMAND:
+                        full_msg = full_msg.decode(self.charactor_code)
+                        self.json_opration.SaveJson(calf_id, recv_datetime, full_msg)
+                        print(f"{calf_id} send sensor data")
+                    # ACKnowledgement
+                    sock.send(self.ACK.encode(self.charactor_code))
+                    break
         except KeyboardInterrupt:
             raise KeyboardInterrupt
         except ConnectionResetError:
@@ -146,8 +158,9 @@ class RaspberryPiConnection():
         except:
             print_exc()
         finally:
+            # finished soket connection 
+            print(f"{calf_id} socket closed")
             sock.close()
-            print("sockt closed")
 
 if __name__ == "__main__":
     from load_setting import LoadSetting

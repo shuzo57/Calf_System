@@ -22,36 +22,40 @@ def main(
         thermo_sensor = amg_conn.amg88
         tof_sensor = tof_conn.vl53
         
-        # send calf id
-        server_conn.SendCalfId(calf_id)
-        
-        while True:
-            cur_data = {}
-            start = time.time()
+        cur_data = {}        
+        if tof_conn.data_ready:
+            # get data
+            dt = datetime.datetime.now()
+            dt = dt.strftime("%Y_%m_%d_%H_%M_%S")
+            temperature = thermo_sensor.pixels
+            distance_mm_list = tof_conn.distance_list(num=5)
+            img = camera_conn.capture()
+            cur_data["dt"] = dt
+            cur_data["temprature"] = temperature
+            cur_data["distance_mm_list"] = distance_mm_list
+            json_data = json.dumps(cur_data)
             
-            if tof_conn.data_ready:
-                # get data
-                dt = datetime.datetime.now()
-                temperature = thermo_sensor.pixels
-                distance_mm_list = tof_conn.distance_list(num=5)
-                img = camera_conn.capture()
-                cur_data["dt"] = str(dt)
-                cur_data["temprature"] = temperature
-                cur_data["distance_mm_list"] = distance_mm_list
-                json_data = json.dumps(cur_data)
-                
-                # send data
-                server_conn.SendSensor(json_data)
-                server_conn.SendImg(img)
-
-            if print_debug:
-                print("#" * 128)
-                print(f"{cur_data}")
+            # connect to server
+            server_conn.ConnectToServer()
+            # send calf id
+            server_conn.SendCalfId(calf_id)
+            # send data
+            server_conn.SendSensor(json_data, dt)
+            #close soket 
+            server_conn.SockClose()
             
-            end = time.time()
-            execution_time = end - start
-            print(f"execution_time : {execution_time}")
-            time.sleep(INTERVAL - execution_time)
+            # connect to server
+            server_conn.ConnectToServer()
+            # send calf id
+            server_conn.SendCalfId(calf_id)
+            # send data
+            server_conn.SendImg(img, dt)
+            #close soket 
+            server_conn.SockClose()
+            
+        if print_debug:
+            print("#" * 128)
+            print(f"{cur_data}")
 
     except KeyboardInterrupt:
         server_conn.SockClose()
@@ -73,6 +77,5 @@ if __name__ == "__main__":
     camera = PicameraConn()
 
     server_conn = ServerConn(connect_info=connect_info)
-    server_conn.ConnectToServer()
     
     main(amg_conn=amg, tof_conn=tof, server_conn=server_conn, camera_conn=camera, calf_id=calf_id)
