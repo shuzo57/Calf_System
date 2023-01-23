@@ -16,7 +16,6 @@ def main(
     server_conn: ServerConn,
     calf_id : str,
     print_debug : bool = True,
-    INTERVAL : int = 10
 ):
     try:
         thermo_sensor = amg_conn.amg88
@@ -28,7 +27,7 @@ def main(
             dt = datetime.datetime.now()
             dt = dt.strftime("%Y_%m_%d_%H_%M_%S")
             temperature = thermo_sensor.pixels
-            distance_mm_list = tof_conn.distance_list(num=5)
+            distance_mm_list = tof_conn.distance_list(num=20)
             img = camera_conn.capture()
             cur_data["dt"] = dt
             cur_data["temprature"] = temperature

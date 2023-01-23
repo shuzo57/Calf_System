@@ -1,0 +1,11 @@
+[Unit]
+Description=timer of calf_data.service
+
+[Timer]
+OnBootSec=1min
+# OnUnitActiveSec=1minute
+OnCalendar = *-*-* 08,09,10,11,12,13,14,15:*:00,30
+Unit=calf_data.service
+
+[Install]
+WantedBy=multi-user.target

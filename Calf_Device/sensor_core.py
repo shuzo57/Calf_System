@@ -11,7 +11,6 @@ import time
 from config import DISTANCE_MODE, INTERVAL
 
 class ThermoSensorConn():
-
     def __init__(
         self,
         address=0x68
@@ -24,7 +23,6 @@ class ThermoSensorConn():
 
 
 class ToFSensorConn():
-
     def __init__(
         self,
         i2c_bus=1,
@@ -49,7 +47,6 @@ class ToFSensorConn():
         self.data_ready = True
 
     def set_distance_mode(self):
-        
         if self.inteructive_mode:
             print("Select a distance mode")
             print("1). SHORT mode")

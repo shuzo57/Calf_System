@@ -10,7 +10,6 @@ import time
 from config import DISTANCE_MODE, INTERVAL
 
 class ThermoSensorConn():
-
     def __init__(
         self,
         address=0x68
@@ -23,7 +22,6 @@ class ThermoSensorConn():
 
 
 class ToFSensorConn():
-
     def __init__(
         self,
         address=0x29,

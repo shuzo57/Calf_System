@@ -69,7 +69,6 @@ class ServerConn():
             if msg == self.ACK:
                 break
             
-            
         while True:
             self.SendDateTime(dt)
             msg = self.sock.recv(self.bufsize).decode(self.charactor_code)
