@@ -3,11 +3,11 @@ import datetime
 from traceback import print_exc
 from sensor_core import ThermoSensorConn, ToFSensorConn
 from server_connection import ServerConn
-from PicameraCapture import PicameraConn
+from picamera_capture import PicameraConn
 import time
 
 # load config
-from config import DISTANCE_MODE, INTERVAL
+from config import DISTANCE_MODE
 
 def main(
     amg_conn: ThermoSensorConn,
